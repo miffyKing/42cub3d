@@ -91,7 +91,7 @@ typedef struct s_map
 	t_player player;
 
 	// 내 추가
-	t_texture tex[4];
+	t_texture tex[5];
 	//
 
 	char *map_value;	// tmp_map_malloc

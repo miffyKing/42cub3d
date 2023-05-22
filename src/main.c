@@ -252,6 +252,28 @@ char	*get_value_of_map(t_map *map, char *line)
 /*-------------------------------------------------------------------*/
 /*----------------------------[ set_type.c  ]----------------------------*/
 
+void	set_type_of_color(t_img *img, int type, char *line)
+{
+	if (type == F)
+	{
+		if (img->floor_color != INIT)
+			exit_with_error("error_message");
+		img->floor_color = get_value_of_color(line);
+	}
+	else if (type == C)
+	{
+		if (img->ceil_color != INIT)
+			exit_with_error("error_message");
+		img->ceil_color = get_value_of_color(line);
+	}
+}
+
+void	set_type_of_map(t_map *map, t_img *img, char *line)
+{
+	check_saved_component(img);
+	map->map_value = get_value_of_map(map, line);
+}
+
 void	set_type_of_component(t_img *img,  int type, char *line)
 {
 	char	*value_line;
@@ -279,32 +301,97 @@ void	set_type_of_component(t_img *img,  int type, char *line)
 	}
 }
 
-void	set_type_of_color(t_img *img, int type, char *line)
+///    ////// free, error handling /////////
+
+void	free_all_data(t_map *map)
 {
-	if (type == F)
+	int	i;
+
+	if (map->map_value)
+		free(map->map_value);
+	map->map_value = NULL;
+	if (map->saved_map)
 	{
-		if (img->floor_color != INIT)
-			exit_with_error("error_message");
-		img->floor_color = get_value_of_color(line);
+		i = -1;
+		while (map->saved_map[++i])
+		{
+			free(map->saved_map[i]);
+			map->saved_map[i] = NULL;
+		}
+		free(map->saved_map);
 	}
-	else if (type == C)
+	i = -1;
+	while (++i < 4)
 	{
-		if (img->ceil_color != INIT)
-			exit_with_error("error_message");
-		img->ceil_color = get_value_of_color(line);
+		if (map->tex[i].tex_path_malloc)
+		{
+			free(map->tex[i].tex_path_malloc);
+			map->tex[i].tex_path_malloc = NULL;
+		}
 	}
 }
 
-void	set_type_of_map(t_map *map, t_img *img, char *line)
+int	exit_event(t_map *map)
 {
-	check_saved_component(img);
-	map->map_value = get_value_of_map(map, line);
+	ft_putendl_fd("EXIT CUB3D", 0);
+	free_all_data(map);
+	exit(1);
 }
 
+void	exit_error(t_map *map, char *message)
+{
+	ft_putendl_fd("ERROR", 2);
+	if (message)
+		ft_putendl_fd(message, 2);
+	free_all_data(map);
+	exit(1);
+}
+
+////////////////////////////////////////////////////
+///////// SAVE TEXTURE - miffy ///////////////////
+
+int	is_upper(char c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return (TRUE);
+	return (FALSE);
+}
+
+int	is_space(char c)
+{
+	if (c == ' ')
+		return (TRUE);
+	return (FALSE);
+}
+
+
+char	*access_information(char *line)
+{
+	while (is_upper(*line) == TRUE)
+		line++;
+	while (is_space(*line) == TRUE)
+		line++;
+	return (line);
+}
+
+static void save_texture(t_map *map, int type, char* line)
+{
+	char	*tex_path;
+	if (map->tex[type].tex_path_malloc)
+			exit_error(map, "Duplicated Identifier");
+	tex_path = access_information(line);
+	//if (check_tex_path(map, tex_path))
+	map->tex[type].tex_path_malloc = ft_strdup(tex_path);
+}
+
+///////// SAVE TEXTURE - miffy END ///////////////////
 void	set_type(t_game* game, int type, char *line)
 {
 	if (NO <= type && type <= EA)
+	{
 		set_type_of_component(&game->map.img, type, line);
+		save_texture(&game->map, type, line);
+	}
 	else if (F <= type && type <= C)
 		set_type_of_color(&game->map.img, type, line);
 	else
@@ -416,6 +503,17 @@ int	main(int	argc, char	**argv)
 		exit_with_error("Error Message");
 	fd = get_file_fd(argv[1]);
 	init_game(&game, fd);
+
+
+
+
+//printf(" value of textures %s\n ", game.map.tex[0].tex_path_malloc);
+printf(" =============== check texture part ===============\n");
+printf(" value of textures %s\n ", game.map.tex[1].tex_path_malloc);
+printf(" value of textures %s\n ", game.map.tex[2].tex_path_malloc);
+printf(" value of textures %s\n ", game.map.tex[3].tex_path_malloc);
+printf(" value of textures %s\n\n\n ", game.map.tex[4].tex_path_malloc);
+
 
 printf("\033[0;32m[ Check saved Component value ]\n\033[0m");
 printf("no value: ||\033[0;31m%s\033[0m||\n", game.map.img.no);
