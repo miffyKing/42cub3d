@@ -35,6 +35,11 @@
 #define C 6
 #define MAP 7
 
+# define SCREEN_WIDTH	1920
+# define SCREEN_HEIGHT	1080
+# define M_UNIT			0.1		// 이동단위
+# define R_UNIT			M_PI_4	// 회전단위
+
 typedef enum
 {
 	false = 0,
@@ -48,6 +53,8 @@ typedef enum
 
 #include <stdio.h>
 
+
+typedef unsigned int	t_ui;
 typedef struct s_img
 {
 	char *no;
@@ -80,7 +87,7 @@ typedef struct s_texture
 {
 	char *tex_path_malloc;
 	unsigned int *data;
-	t_img texture;
+	t_img2 texture;
 	int width;
 	int height;
 } t_texture;
@@ -106,6 +113,12 @@ typedef struct s_game
 	void *mlx;
 	void *win;
 	t_map map;
+
+	t_img2	wall;
+	t_ui	*wall_data;
+	t_img2	screen;
+	t_ui	*screen_data;
+
 } t_game;
 
 #endif

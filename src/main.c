@@ -494,6 +494,36 @@ void	init_game(t_game *game, int fd)
 	free(line);
 }
 
+int	window_init(t_game *game)
+{
+	game->mlx = mlx_init();
+	if (!game->mlx)
+		return (1);
+	game->win = mlx_new_window(game->mlx, (int)SCREEN_WIDTH,
+			(int)SCREEN_HEIGHT, "CUB_3D");
+	if (!game->win)
+		return (1);
+	return (0);
+}
+
+void	img_init(t_game *game)
+{
+	t_texture	*tx;
+
+	tx = game->map.tex;
+	tx[0].texture.img = mlx_xpm_file_to_image(game->mlx,
+			tx[0].tex_path_malloc, &(tx[0].width), &(tx[0].height));
+	tx[1].texture.img = mlx_xpm_file_to_image(game->mlx,
+			tx[1].tex_path_malloc, &(tx[1].width), &(tx[1].height));
+	tx[2].texture.img = mlx_xpm_file_to_image(game->mlx,
+			tx[2].tex_path_malloc, &(tx[2].width), &(tx[2].height));
+	tx[3].texture.img = mlx_xpm_file_to_image(game->mlx,
+			tx[3].tex_path_malloc, &(tx[3].width), &(tx[3].height));
+	game->screen.img = mlx_new_image(game->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
+	//game->minimap.img = mlx_new_image(game->mlx, game->miniw, game->minih);
+}
+
+
 int	main(int	argc, char	**argv)
 {
 	int		fd;
@@ -504,6 +534,7 @@ int	main(int	argc, char	**argv)
 	fd = get_file_fd(argv[1]);
 	init_game(&game, fd);
 
+	window_init(&game);
 
 
 
