@@ -144,8 +144,8 @@ void get_map(t_map *map)
 	while (map->saved_map[++col] != 0)
 		if (ft_strlen(map->saved_map[col]) > (size_t)row)
 			row = ft_strlen(map->saved_map[col]);
-	map->col = col;
-	map->row = row;
+	map->col = row;
+	map->row = col;
 	free(map->map_value);
 	map->map_value = NULL;
 }
