@@ -1,13 +1,27 @@
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -Iinclude  #-g3 -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -Iinclude  -g #-g3 -fsanitize=address
 # -g3 -fsanitize=address
 # -o2 or -o3
 NAME = cub3D
 
 SRCS_DIR = src
-SRCS =	src/main.c \
+SRCS =	src/main.c			\
+		src/exit.c			\
+		src/generate_map.c	\
+		src/get_type.c		\
+		src/set_type.c		\
+		src/get_value.c		\
+		src/set_value.c		\
+		src/init.c			\
+		src/validation.c	\
+		src/input_key.c \
+		src/set_ray.c \
+		src/set_texture.c \
+		src/raycast.c \
+		src/draw_line.c \
+
 
 OBJS = $(SRCS:.c=.o)
 
